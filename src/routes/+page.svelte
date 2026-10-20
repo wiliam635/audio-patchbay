@@ -10,16 +10,20 @@
 	import { TemplateModal } from '$lib/modules/template/ui';
 
 	async function createPipeline() {
-		const templateId = await modalManager.open<string>('New pipeline', TemplateModal, {
+		const templateId = await modalManager.open<string>('New audio mix', TemplateModal, {
 			size: 'xl',
-			description: 'Start from a wired-up layout, or an empty canvas.'
+			description: 'Choose a patchbay layout, then connect your audio sources and outputs.'
 		});
 		if (!templateId) return;
 
 		const template = TEMPLATES.find((t) => t.id === templateId);
 		if (!template) return;
 
-		const name = `Pipeline ${pipelineStore.pipelines.length + 1}`;
+		const patchbayCount = pipelineStore.pipelines.filter((p) => p.name.startsWith('Loopback Audio')).length;
+		const name =
+			template.id === 'loopback-patchbay'
+				? `Loopback Audio${patchbayCount ? ` ${patchbayCount + 1}` : ''}`
+				: `Mix ${pipelineStore.pipelines.length + 1}`;
 		const p = instantiate(template, name);
 		await pipelineStore.save(p);
 		await goto(`/pipelines/${p.id}`);
@@ -81,21 +85,21 @@
 	{/if}
 
 	<div class="flex items-center justify-between">
-		<h1 class="text-2xl font-semibold">Pipelines</h1>
+		<h1 class="text-2xl font-semibold">Audio mixes</h1>
 
 		<button class="button-main primary gap-1.5 p-6 py-2" onclick={createPipeline}>
 			<Add class="size-4" />
-			New pipeline
+			New mix
 		</button>
 	</div>
 
 	{#if pipelineStore.pipelines.length === 0}
 		<div class="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-neutral-400 py-16">
 			<SoundWave class="size-10 text-neutral-600" />
-			<p class="text-sm text-neutral-900">No pipelines yet. Create one to get started.</p>
+			<p class="text-sm text-neutral-900">No audio mixes yet. Create a patchbay to get started.</p>
 			<button class="button-main primary gap-1.5 py-1.5" onclick={createPipeline}>
 				<Add class="size-4" />
-				New pipeline
+				New mix
 			</button>
 		</div>
 	{:else}

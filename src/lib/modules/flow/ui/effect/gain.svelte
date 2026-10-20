@@ -30,7 +30,7 @@
 	}
 </script>
 
-<Wrapper label="Gain" icon={Trending} accent="effect" hasInput hasOutput channelIo nodeId={id} bypassed={data.bypassed} onBypass={toggleBypass}>
+<Wrapper label={data.displayName ?? 'Gain'} icon={Trending} accent="effect" hasInput hasOutput channelIo nodeId={id} bypassed={data.bypassed} onBypass={toggleBypass}>
 	<div class="nowheel nodrag w-48">
 		<Slider
 			label="Level"

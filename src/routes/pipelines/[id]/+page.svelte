@@ -10,10 +10,31 @@
 	import { SnapshotHistory, SavedIndicator, UndoRedo } from '$lib/modules/flow/ui';
 	import { Toaster } from 'svelte-french-toast';
 	import { isFromFuture } from '$lib/modules/pipeline/migrations';
+	import { Add } from '$lib/components/icons';
 
 	let pipeline = $state<Pipeline | null>(null);
 	let notFound = $state(false);
 	let stale = $state(false);
+	let busyMix = $state<string | null>(null);
+
+	async function toggleMix(id: string, event: MouseEvent) {
+		event.preventDefault();
+		event.stopPropagation();
+		if (busyMix) return;
+		busyMix = id;
+		try {
+			if (audioStore.isRunning) {
+				if (audioStore.runningPipelineId === id) await audioStore.deactivatePipeline();
+			} else {
+				const selected = await pipelineMethods.get(id);
+				if (selected && !isFromFuture(selected)) await audioStore.activatePipeline(id, { nodes: selected.nodes, edges: selected.edges });
+			}
+		} catch (e) {
+			audioStore.reportError(e);
+		} finally {
+			busyMix = null;
+		}
+	}
 
 	$effect(() => {
 		const id = page.params.id;
@@ -81,7 +102,7 @@
 <Header>
 	{#snippet left()}
 		<div class="flex items-center gap-3">
-			<a href="/" class="button-header px-4 text-sm">← Back</a>
+			<a href="/" class="button-header px-4 text-sm">← Back to mixes</a>
 			{#if pipeline}
 				<div class="relative">
 					<span bind:this={nameMirror} class="pointer-events-none invisible absolute top-0 left-0 px-2.5 whitespace-pre" aria-hidden="true">
@@ -110,7 +131,9 @@
 				<UndoRedo />
 				<SavedIndicator />
 				<SnapshotHistory pipelineId={pipeline.id} />
-				<ActivationButton pipelineId={pipeline.id} />
+				{#if pipeline.layout !== 'patchbay'}
+					<ActivationButton pipelineId={pipeline.id} />
+				{/if}
 			{/if}
 		</div>
 	{/snippet}
@@ -129,10 +152,46 @@
 				</span>
 				<span>Update Splitwave to open it.</span>
 			</div>
-			<a href="/" class="button-main primary rounded-lg text-sm">Back to pipelines</a>
+			<a href="/" class="button-main primary rounded-lg text-sm">Back to mixes</a>
 		</div>
 	{:else if pipeline}
-		<Flow.ui.Flow {pipeline} />
+		<aside class="flex w-56 shrink-0 flex-col border-r border-neutral-100 bg-background dark:border-[#11191a] dark:bg-[#1a2021]">
+			<div class="border-b border-neutral-100 px-4 py-3 text-sm font-semibold dark:border-[#11191a]">Mixes</div>
+			<div class="flex-1 overflow-y-auto p-2">
+				{#each pipelineStore.pipelines as mix (mix.id)}
+					{@const staleMix = isFromFuture(mix)}
+					<div
+						class={[
+							'mb-1 flex items-center gap-1 rounded-lg px-2 py-2',
+							mix.id === pipeline.id ? 'bg-neutral-300 dark:bg-[#303a3b]' : 'hover:bg-neutral-200 dark:hover:bg-[#252d2e]'
+						]}>
+						<a href={staleMix ? undefined : `/pipelines/${mix.id}`} class={['flex min-w-0 flex-1 items-center gap-2 text-sm', staleMix && 'opacity-50']}>
+							<span class={['size-2 shrink-0 rounded-full', audioStore.runningPipelineId === mix.id ? 'bg-emerald-400' : 'bg-neutral-500']}></span>
+							<span class="truncate">{mix.name}</span>
+						</a>
+						<button
+							class={[
+								'h-6 min-w-9 rounded border px-1.5 text-[10px] font-semibold',
+								audioStore.runningPipelineId === mix.id
+									? 'border-emerald-500/50 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+									: 'border-neutral-400 bg-neutral-100 text-neutral-800 dark:bg-[#202728] dark:text-neutral-200'
+							]}
+							disabled={staleMix || !!busyMix || (audioStore.isRunning && audioStore.runningPipelineId !== mix.id)}
+							aria-label={`${audioStore.runningPipelineId === mix.id ? 'Stop' : 'Start'} ${mix.name}`}
+							onclick={(event) => toggleMix(mix.id, event)}>
+							{busyMix === mix.id ? '…' : audioStore.runningPipelineId === mix.id ? 'On' : 'Off'}
+						</button>
+					</div>
+				{/each}
+			</div>
+			<div class="flex flex-col gap-2 border-t border-neutral-100 p-3 dark:border-[#11191a]">
+				<a href="/" class="button-main primary justify-start gap-2 rounded-lg px-2.5 py-1.5 text-xs"><Add class="size-3.5" /> New mix</a>
+				<a href="/virtual-devices" class="px-2 text-xs text-neutral-900 hover:text-theme">Manage virtual devices</a>
+			</div>
+		</aside>
+		{#key pipeline.id}
+			<Flow.ui.Flow {pipeline} />
+		{/key}
 	{:else}
 		<div class="p-8 text-sm text-gray-500">Loading…</div>
 	{/if}

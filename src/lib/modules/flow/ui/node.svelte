@@ -78,11 +78,19 @@
 	}
 </script>
 
-<div class={['node-shell min-w-32 rounded-2xl border border-neutral-400 bg-neutral-200 p-4 shadow-sm', !wide && 'max-w-80']}>
-	<div class="mb-2 flex items-center justify-between gap-2">
-		<span class="flex items-center gap-1.5 text-[10px] font-semibold tracking-wider text-neutral-900 uppercase">
+<div
+	class={[
+		'node-shell min-w-48 rounded-xl border border-neutral-400 bg-neutral-200 p-4 shadow-md dark:border-[#101617] dark:bg-[#202728]',
+		!wide && 'max-w-80'
+	]}>
+	<div
+		class={[
+			'-mt-4 -mx-4 mb-3 flex items-center justify-between gap-2 rounded-t-xl border-b border-neutral-300 bg-neutral-400 px-3 py-2',
+			'dark:border-[#11191a] dark:bg-[#4d585a]'
+		]}>
+		<span class="flex items-center gap-1.5 text-sm font-semibold text-neutral-1000 dark:text-[#f1f5f4]">
 			{#if NodeIcon}
-				<NodeIcon class={['size-3 shrink-0', CATEGORY_TEXT[accent]]} />
+				<NodeIcon class={['size-4 shrink-0', CATEGORY_TEXT[accent]]} />
 			{/if}
 			{label}
 			{#if srcTooltip}

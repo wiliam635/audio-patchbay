@@ -5,6 +5,36 @@ const ROW = 280;
 
 export const TEMPLATES: Template[] = [
 	{
+		id: 'loopback-patchbay',
+		accent: 'sky',
+		name: 'Loopback-style patchbay',
+		description: 'Mix app, system, and microphone audio, then send it to a virtual device and monitor outputs.',
+		nodes: [
+			{ key: 'system', kind: 'systemAudio', position: { x: 0, y: 80 } },
+			{ key: 'app', kind: 'appAudio', position: { x: 0, y: 360 } },
+			{ key: 'mic', kind: 'microphone', position: { x: 0, y: 640 } },
+			{ key: 'channels', kind: 'gain', position: { x: 470, y: 360 }, data: { displayName: 'Output Channels' } },
+			{ key: 'virtual', kind: 'speaker', position: { x: 960, y: 160 }, data: { displayName: 'Virtual Device' } },
+			{ key: 'monitor', kind: 'speaker', position: { x: 960, y: 440 }, data: { displayName: 'Monitor' } },
+			{ key: 'meter', kind: 'levelMeter', position: { x: 960, y: 720 } }
+		],
+		edges: [
+			{ from: 'system', to: 'channels', fromCh: 1, toCh: 1 },
+			{ from: 'system', to: 'channels', fromCh: 2, toCh: 2 },
+			{ from: 'app', to: 'channels', fromCh: 1, toCh: 1 },
+			{ from: 'app', to: 'channels', fromCh: 2, toCh: 2 },
+			// Center a mono microphone in the stereo mix.
+			{ from: 'mic', to: 'channels', fromCh: 1, toCh: 1 },
+			{ from: 'mic', to: 'channels', fromCh: 1, toCh: 2 },
+			{ from: 'channels', to: 'virtual', fromCh: 1, toCh: 1 },
+			{ from: 'channels', to: 'virtual', fromCh: 2, toCh: 2 },
+			{ from: 'channels', to: 'monitor', fromCh: 1, toCh: 1 },
+			{ from: 'channels', to: 'monitor', fromCh: 2, toCh: 2 },
+			{ from: 'channels', to: 'meter', fromCh: 1, toCh: 1 },
+			{ from: 'channels', to: 'meter', fromCh: 2, toCh: 2 }
+		]
+	},
+	{
 		id: 'blank',
 		accent: 'neutral',
 		name: 'Blank',

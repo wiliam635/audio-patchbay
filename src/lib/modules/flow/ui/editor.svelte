@@ -387,6 +387,7 @@
 		return {
 			id: pipeline.id,
 			name: pipeline.name,
+			layout: pipeline.layout,
 			createdAt: pipeline.createdAt,
 			nodes: fromXyNodes(nodes),
 			edges: fromXyEdges(edges),
@@ -632,6 +633,14 @@
 
 <div class="flex h-full w-full">
 	<div class="relative flex-1" role="region" aria-label="Flow editor" ondragover={onDragOver} ondrop={onDrop}>
+		{#if pipeline.layout === 'patchbay'}
+			<div
+				class="pointer-events-none absolute inset-x-0 top-3 z-10 grid grid-cols-[1fr_1.4fr_1fr] px-6 text-xs font-semibold text-neutral-900 uppercase tracking-wider">
+				<span>Sources</span>
+				<span>Output channels</span>
+				<span>Monitors</span>
+			</div>
+		{/if}
 		<SvelteFlow
 			proOptions={{ hideAttribution: true }}
 			class="!bg-background"

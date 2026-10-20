@@ -4,7 +4,7 @@
 	import { compose, dataArgs, envArgs, range, signalArgs, wiringArgs } from '../harness/args';
 
 	const { argTypes, args } = compose(
-		dataArgs({ gainDb: { control: range(-24, 24, 0.1) }, bypassed: { control: 'boolean' } }, { gainDb: 0, bypassed: false }),
+		dataArgs({ gainDb: { control: range(-24, 24, 0.1) }, bypassed: { control: 'boolean' }, displayName: { control: 'text' } }, { gainDb: 0, bypassed: false }),
 		wiringArgs(2),
 		signalArgs(['signal', 'signalLevel', 'signalChannels']),
 		envArgs(['running'])
@@ -24,3 +24,4 @@
 <Story name="Bypassed" args={{ gainDb: 6, bypassed: true }} {template} />
 <Story name="Unwired" args={{ wiredInputs: 0 }} {template} />
 <Story name="Eight channels" args={{ wiredInputs: 8, signalChannels: 8 }} {template} />
+<Story name="Named channels" args={{ displayName: 'Output Channels' }} {template} />

@@ -34,6 +34,7 @@ export function instantiate(template: Template, name: string): Pipeline {
 	return {
 		id: createId(),
 		name,
+		...(template.id === 'loopback-patchbay' ? { layout: 'patchbay' as const } : {}),
 		nodes,
 		edges,
 		createdAt: now,

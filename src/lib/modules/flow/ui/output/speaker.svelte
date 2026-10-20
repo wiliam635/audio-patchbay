@@ -74,7 +74,7 @@
 	});
 </script>
 
-<Wrapper label="Speaker" accent="output" icon={Speaker} {srcTooltip}>
+<Wrapper label={data.displayName ?? 'Speaker'} accent="output" icon={Speaker} {srcTooltip}>
 	<div class="flex w-50 flex-col gap-1">
 		<Combobox class="w-full" {options} value={data.deviceId ?? null} placeholder="— Select output —" onChange={setDevice} onOpen={() => refresh()}>
 			{#snippet footer(close)}

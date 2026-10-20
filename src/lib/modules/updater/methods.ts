@@ -20,6 +20,7 @@ type CheckMetadata = {
 const PREFS_FILE = 'updater_prefs.json';
 const SKIPPED_KEY = 'skippedVersion';
 const prefs = new LazyStore(PREFS_FILE);
+const UPDATER_DISABLED = import.meta.env.VITE_DISABLE_UPDATER === 'true';
 
 export async function getSkippedVersion(): Promise<string | null> {
 	try {
@@ -78,6 +79,10 @@ async function resolveUpdateEndpoint(): Promise<string | null> {
 }
 
 export async function checkForUpdates(silent = false): Promise<void> {
+	if (UPDATER_DISABLED) {
+		updaterStore.state = { phase: 'idle' };
+		return;
+	}
 	updaterStore.state = { phase: 'checking' };
 	let endpoint: string | null = null;
 	try {

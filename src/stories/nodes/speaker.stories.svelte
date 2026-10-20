@@ -4,7 +4,10 @@
 	import { compose, dataArgs, envArgs, signalArgs, wiringArgs } from '../harness/args';
 
 	const { argTypes, args } = compose(
-		dataArgs({ deviceId: { control: 'select', options: ['out-1', 'out-2', 'out-3', 'missing-device'] } }, { deviceId: 'out-1' }),
+		dataArgs(
+			{ deviceId: { control: 'select', options: ['out-1', 'out-2', 'out-3', 'missing-device'] }, displayName: { control: 'text' } },
+			{ deviceId: 'out-1' }
+		),
 		wiringArgs(2),
 		signalArgs(['signal', 'signalLevel', 'signalChannels', 'signalMotion']),
 		envArgs(['platform', 'running', 'outputDevices', 'deviceChannels', 'deviceSampleRate', 'deviceVolume', 'pipelineSampleRate'])
@@ -27,3 +30,4 @@
 <Story name="Surround" args={{ deviceChannels: 6, wiredInputs: 6, signalChannels: 6 }} {template} />
 <Story name="Unwired" args={{ wiredInputs: 0 }} {template} />
 <Story name="Windows" args={{ platform: 'windows' }} {template} />
+<Story name="Virtual device" args={{ displayName: 'Virtual Device' }} {template} />

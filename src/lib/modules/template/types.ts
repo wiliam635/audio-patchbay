@@ -5,7 +5,7 @@ export interface TemplateNode {
 	key: string;
 	kind: NodeKind;
 	position: { x: number; y: number };
-	data?: Partial<AnyNodeData>;
+	data?: Partial<AnyNodeData> & { displayName?: string };
 }
 
 export interface TemplateEdge {

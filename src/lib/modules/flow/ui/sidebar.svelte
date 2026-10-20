@@ -30,7 +30,7 @@
 	}
 </script>
 
-<aside class="flex w-72 flex-col border-l border-neutral-100 bg-background">
+<aside class="flex w-72 flex-col border-l border-neutral-100 bg-background dark:border-[#11191a] dark:bg-[#1a2021]">
 	<nav class="flex shrink-0 items-center gap-1 border-b border-neutral-100 bg-background px-4 py-2.5">
 		{#each categoryOrder as category (category)}
 			{@const Icon = CATEGORY_ICON[category]}

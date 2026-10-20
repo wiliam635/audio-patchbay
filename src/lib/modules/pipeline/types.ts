@@ -48,9 +48,11 @@ export type MicrophoneNodeData = XyData<MicrophoneData>;
 export type SystemAudioNodeData = XyData<SystemAudioData>;
 export type AppAudioNodeData = XyData<AppAudioData>;
 export type AudioFileNodeData = XyData<AudioFileData>;
-export type SpeakerNodeData = XyData<SpeakerData>;
+// FE-only labels let the patchbay template name its virtual output and monitor.
+export type SpeakerNodeData = XyData<SpeakerData & { displayName?: string }>;
 export type FileRecordingNodeData = XyData<FileRecordingData>;
-export type GainNodeData = XyData<GainData>;
+// FE-only label for the patchbay's channel strip.
+export type GainNodeData = XyData<GainData & { displayName?: string }>;
 // FE-only, invisible to the engine: `hotkey` is a Tauri accelerator that toggles
 // `muted`, the `cue*` pair configures the spoken confirmation on toggle.
 // `pushToTalk` swaps the hotkey from a toggle to hold-to-unmute.
@@ -144,6 +146,7 @@ export interface PipelineEdge {
 export interface Pipeline {
 	id: string;
 	name: string;
+	layout?: 'patchbay';
 	nodes: PipelineNode[];
 	edges: PipelineEdge[];
 	createdAt: number;
